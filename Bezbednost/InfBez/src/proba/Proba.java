@@ -55,11 +55,19 @@ public class Proba {
                 ZipOutputStream zos = new ZipOutputStream(fos))
         {
 
-            System.out.println("Zipuje se folder : " + zipFile);
+            System.out.println("Zipuje se u : " + zipFile);
 
             for (String file : this.fileList)
             {
+            	String extension = "";
+
+            	int i = file.lastIndexOf('.');
+            	if (i >= 0) {
+            	    extension = file.substring(i+1);
+            	    
+            	}
             	
+            	if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("gif") || extension.equals("png")) {
                 System.out.println("U zip dodat : " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
@@ -74,10 +82,13 @@ public class Proba {
                 }
 
                 in.close();
+                
             }
-
+            }
+        
             zos.closeEntry();
-
+            
+          
             System.out.println("Zip kreiran...");
         }
 
