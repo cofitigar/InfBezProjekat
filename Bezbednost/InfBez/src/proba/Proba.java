@@ -1,123 +1,103 @@
 package proba;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
+import javax.lang.model.element.Element;
+import javax.swing.text.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
+
 public class Proba {
 	
-	private ArrayList<String> fileList;
-	private static final String OUTPUT_ZIP_FILE = "C:\\Users\\COFITIGAR\\Desktop\\images.zip";
-	private static String source  = null;
+	public static List<File> zaZip = new ArrayList<>();
 	
-	public Proba() {
-		fileList = new ArrayList<String>();
-	}
-
 	public static void main(String[] args) throws IOException {
 		
-//		"C:\Users\COFITIGAR\Desktop\slike"
+//		C:\Users\COFITIGAR\Desktop\slike
+		
+    	System.out.println("Putanja foldera: ");
+
+    	Scanner scanner = new Scanner(System.in);
+    	String putanja = scanner.nextLine();
+    	scanner.close();
+    	File dir = new File(putanja);
+    	
+    	try {
+    		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			org.w3c.dom.Document doc = dBuilder.newDocument();
+			org.w3c.dom.Element rootElement = doc.createElement("slike");
+			doc.appendChild(rootElement);
+			
+			for (File file : dir.listFiles()) {
+				if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg") || file.getName().endsWith(".gif") || file.getName().endsWith(".png")) {
+					zaZip.add(file);
+					
+					
+					
+					
+				org.w3c.dom.Element slika = doc.createElement("slika");
+					
+                  Attr velicina = doc.createAttribute("velicina");
+                  velicina.setValue(String.valueOf(file.length()/1024));
+                  slika.setAttributeNode(velicina);
+                  
+                  Attr hash = doc.createAttribute("hash");
+                  hash.setValue(String.valueOf(file.hashCode()));
+                  slika.setAttributeNode(hash);
+                  
+                  slika.appendChild(doc.createTextNode(file.getName()));
+                  
+                  rootElement.appendChild(slika);
+				}
+			}
+			
+			
+	    	 TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	         Transformer transformer = transformerFactory.newTransformer();
+	         DOMSource source = new DOMSource(doc);
+	         File xmlFile = new File("./data/slike.xml");
+	         
+	         StreamResult result = new StreamResult(xmlFile);
+	            transformer.transform(source, result);            
+//	            
+//	            zaZip.add(xmlFile.getAbsolutePath());
+//	            zipFiles(zaZip);
+    	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	
+
 		
 
-		Scanner scanner = new Scanner(System.in);  
-		System.out.println("Unesite putanju do foldera: ");
-		String datoteka = scanner.next(); 
-		
-		
-		
-
-		
-		source=datoteka.toString();
-		Proba zip = new Proba();
-		zip.generateFileList(new File(source));
-		zip.zipIt(OUTPUT_ZIP_FILE);
-		
- 
-	}
 	
-
-
-    public void zipIt(String zipFile) throws IOException
-    {
-
-        byte[] buffer = new byte[1024];
-
-
-        try (
-                FileOutputStream fos = new FileOutputStream(zipFile);
-                ZipOutputStream zos = new ZipOutputStream(fos))
-        {
-
-            System.out.println("Zipuje se u : " + zipFile);
-
-            for (String file : this.fileList)
-            {
-            	String extension = "";
-
-            	int i = file.lastIndexOf('.');
-            	if (i >= 0) {
-            	    extension = file.substring(i+1);
-            	    
-            	}
-            	
-            	if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("gif") || extension.equals("png")) {
-                System.out.println("U zip dodat : " + file);
-                ZipEntry ze = new ZipEntry(file);
-                zos.putNextEntry(ze);
-
-                FileInputStream in = new FileInputStream(source
-                        + File.separator + file);
-
-                int len;
-                while ((len = in.read(buffer)) > 0)
-                {
-                    zos.write(buffer, 0, len);
-                }
-
-                in.close();
-                
-            }
-            }
-        
-            zos.closeEntry();
-            
-          
-            System.out.println("Zip kreiran...");
-        }
-
-    }
-    
-    public void generateFileList(File node)
-    {
-
-        // add file only
-        if (node.isFile())
-        {
-            fileList.add(generateZipEntry(node.getAbsoluteFile().toString()));
-        }
-
-        if (node.isDirectory())
-        {
-            String[] subNote = node.list();
-            for (String filename : subNote)
-            {
-                generateFileList(new File(node, filename));
-            }
-        }
-
-    }
-    
-    private String generateZipEntry(String file)
-    {
-        return file.substring(source.length() + 1, file.length());
-    }
+}
+	
 }
 	
 
