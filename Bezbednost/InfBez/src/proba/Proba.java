@@ -8,7 +8,10 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
@@ -57,7 +60,7 @@ public class Proba {
 					zaZip.add(file);
 					
 					
-					
+					//datum i ime kreirati
 					
 				org.w3c.dom.Element slika = doc.createElement("slika");
 					
@@ -72,6 +75,16 @@ public class Proba {
                   slika.appendChild(doc.createTextNode(file.getName()));
                   
                   rootElement.appendChild(slika);
+                  
+                  DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                  org.w3c.dom.Element datum = doc.createElement("datum");
+                  datum.appendChild(doc.createTextNode(format.format(new Date())));
+                  rootElement.appendChild(datum);
+                  
+                  org.w3c.dom.Element kor = doc.createElement("korisnickoIme");
+                  kor.appendChild(doc.createTextNode("cofitigar"));
+                  rootElement.appendChild(kor);
+
 				}
 			}
 			
@@ -83,20 +96,50 @@ public class Proba {
 	         
 	         StreamResult result = new StreamResult(xmlFile);
 	            transformer.transform(source, result);            
-//	            
-//	            zaZip.add(xmlFile.getAbsolutePath());
-//	            zipFiles(zaZip);
+	            
+	            zaZip.add(xmlFile);
+	            zipuj();
     	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
     	
-    	
-
-		
 
 	
 }
+	
+	
+	public static void zipuj() throws IOException {
+		
+		System.out.println("Zipuje se...");
+		
+		FileOutputStream fos = new FileOutputStream("C:\\Users\\COFITIGAR\\Desktop\\slike.zip");
+		ZipOutputStream zipOut = new ZipOutputStream(fos);
+		
+		for (File file : zaZip) {
+			FileInputStream fis = new FileInputStream(file);
+			ZipEntry zipEntry = new ZipEntry(file.getName());
+			zipOut.putNextEntry(zipEntry);
+			System.out.println("U zip dodat file: "+ file.getName());
+			
+			byte[] bytes = new byte[1024];
+			int length;
+			
+			while((length = fis.read(bytes)) >= 0) {
+				zipOut.write(bytes, 0, length);
+			}
+			
+			fis.close();
+		}
+		
+		zipOut.close();
+		fos.close();		
+		
+		System.out.println("Zipovanje zavrseno.");
+
+		
+	}
+
 	
 }
 	
