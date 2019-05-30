@@ -63,9 +63,6 @@ import potpis.Potpis;
 
 public class Proba {
 	
-	private static final String IN_DOC = "./data/slike.xml";
-	private static final String OUT_DOC = "./data/potpisanaSlika.xml";
-	private static final String KEY_STORE_FILE = "./data/kod.jks";
 	
 	public static List<File> zaZip = new ArrayList<>();
 	

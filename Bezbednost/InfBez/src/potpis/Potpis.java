@@ -30,7 +30,7 @@ public class Potpis {
 
 	private static final String IN_FILE = "./data/slike.xml";
 	private static final String OUT_FILE = "./data/potpisano.xml";
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
+	private static final String KEY_STORE_FILE = "./data/sifra.jks";
 
 
     static {
@@ -94,10 +94,10 @@ public class Potpis {
             KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-            ks.load(in, "primer".toCharArray());
+            ks.load(in, "sifra".toCharArray());
 
-            if(ks.isKeyEntry("primer")) {
-                return ks.getCertificate("primer");
+            if(ks.isKeyEntry("sifra")) {
+                return ks.getCertificate("sifra");
             }
             else
                 return null;
@@ -112,9 +112,9 @@ public class Potpis {
         try {
             KeyStore ks = KeyStore.getInstance("JKS", "SUN");
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-            ks.load(in, "primer".toCharArray());
-            if(ks.isKeyEntry("primer")) {
-                return (PrivateKey) ks.getKey("primer", "primer".toCharArray());
+            ks.load(in, "sifra".toCharArray());
+            if(ks.isKeyEntry("sifra")) {
+                return (PrivateKey) ks.getKey("sifra", "sifra".toCharArray());
             }
             else
                 return null;
