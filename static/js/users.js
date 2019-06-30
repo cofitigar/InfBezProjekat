@@ -112,7 +112,7 @@ function activateUser(id){
 		cache: false,
 		processData: false,
 		success:function(response){
-			alert("User activated.");
+			alert("Korisnik aktiviran.");
 			fillTable();
 			fillInactiveTable();
 		},
